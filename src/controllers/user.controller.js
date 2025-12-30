@@ -1,33 +1,49 @@
 const User = require("../models/user.model");
+const userService = require("../services/user.service");
 const ApiError = require("../utils/apiError");
+const ApiResponse = require("../utils/apiResponse");
 
-const userRegister = async(req, res) => {
-    let body = req.body;
-    const existingUser = await User.findOne({ email: body.email });
-    if (existingUser) {
-        throw new ApiError(400, "Email is already registered");
+const userRegister = async(req, res, next) => {
+    try{
+        const user = await userService.createUser(req.body);
+        const token = user.generateAuthToken();
+        res.status(201).json(new ApiResponse(201, { user, token }, 'User registered successfully'));
+    } catch (error) {
+        // res.status(400).json(new ApiError(400, error.message));
+        next(error);     
     }
-    user = await User.create(body);
-    let token = user.generateAuthToken();
-    res.json({ message: "User registered successfully "+ token });
 }
 
-const userLogin = async(req, res) => {
-    let body = req.body;
-    let user = await User.findOne({ email: body.email }).select("+password");
-    if (!user || !(await user.comparePassword(body.password))) {
-        return ApiError(400, "Invalid email or password");
+const userLogin = async(req, res, next) => {
+    try { 
+        const user =  await userService.userLogin(req.body);
+        let token = user.generateAuthToken();
+        res.json({ message: "User logged in successfully", token });
+    } catch (error) {
+        next(error);
     }
-    let token = user.generateAuthToken();
-    res.json({ message: "User logged in successfully", token });
+    
 }
 
-const getUserProfile = async(req, res) => {
-    res.json(req.user);
+const getUserProfile = async(req, res, next) => {
+    try {
+        user = await userService.getUserById(req.user._id);
+        res.status(200).json(new ApiResponse(200, user));
+    } catch (error) {
+        next(error);
+    }
 }
 
-const updateUserProfile = async(req, res) => {
-    res.send("Update User Profile Endpoint");
+const updateUserProfile = async(req, res, next) => {
+    try {
+        if (req.body.password || req.body.$set?.password) {
+            throw new ApiError(400, "Password cannot be updated via this route");
+        }
+        const updatedUser = await userService.updateUser(req.user._id, req.body);
+        res.status(200).json(new ApiResponse(200, updatedUser, "User profile updated successfully"));
+    } catch (error) {
+        next(error);
+    }
 }
 
 const userHome = async(req, res) => {

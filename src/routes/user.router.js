@@ -11,6 +11,6 @@ router.post("/login", userLogin);
 
 router.get("/profile",verify, getUserProfile);
 
-router.put("/profile", updateUserProfile);
+router.put("/profile",verify, updateUserProfile);
 
 module.exports = router;
