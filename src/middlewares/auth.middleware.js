@@ -17,7 +17,7 @@ const verify = async (req, res, next) => {
       throw new ApiError(401, 'Not authorized to access this route');
     }
 
-    const decoded = jwt.verify(token, 'app-secraet-key');
+    const decoded = jwt.verify(token, process.env.APP_SECRET);
     req.user = await User.findById(decoded._id).select('-password');
 
     if (!req.user) {

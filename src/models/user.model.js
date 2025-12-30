@@ -21,7 +21,7 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 };
 
 userSchema.methods.generateAuthToken = function() {
-    const token = jsonwebtoken.sign({ _id: this._id, email: this.email }, 'app-secraet-key', { expiresIn: '1h' });
+    const token = jsonwebtoken.sign({ _id: this._id, email: this.email }, process.env.APP_SECRET, { expiresIn: '1h' });
     return token;
 };
 
