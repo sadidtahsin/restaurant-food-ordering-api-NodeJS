@@ -1,8 +1,9 @@
 const app = require("./src/app");
 const mongoose = require("mongoose");
+require('dotenv').config();
 
 //  db connetion
-mongoose.connect("mongodb+srv://node-app:m8Y8gkSN73XuAYsM@cluster0.wfxzsle.mongodb.net/restaurent-db?appName=Cluster0",)
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
     console.log("Connected to MongoDB");
 }).catch((err) => {
