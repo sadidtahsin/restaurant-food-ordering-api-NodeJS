@@ -3,24 +3,39 @@ const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
-    name: { 
-        type: String,
-        required: true,
-        trim: true,
-        length: [50, "Name cannot exceed 50 characters"] 
-    },
-    email: { 
-        type: String,
-        required: true,
-        unique: true,
-        match: [/.+\@.+\..+/, "Please fill a valid email address"]
-    },
-    password: { 
-        type: String, 
-        required: true, 
-        minlength: [6, "Password must be at least 6 characters long"],
-        select: false 
-    },
+    name: {
+    type: String,
+    required: [true, 'Please provide a name'],
+    trim: true,
+    maxlength: [50, 'Name cannot be more than 50 characters']
+  },
+  email: {
+    type: String,
+    required: [true, 'Please provide an email'],
+    unique: true,
+    lowercase: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
+  },
+  password: {
+    type: String,
+    required: [true, 'Please provide a password'],
+    minlength: [6, 'Password must be at least 6 characters'],
+    select: false
+  },
+  phone: {
+    type: String,
+    match: [/^[0-9]{10,15}$/, 'Please provide a valid phone number']
+  },
+  role: {
+    type: String,
+    enum: ['customer', 'admin'],
+    default: 'customer'
+  },
+  address: {
+    street: String,
+    city: String,
+    zipCode: String
+  }
 }, { 
     timestamps: true,
     toJSON: {
