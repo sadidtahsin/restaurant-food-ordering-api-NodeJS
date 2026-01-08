@@ -57,7 +57,7 @@ The server will start on `http://localhost:4000` and auto-reload on file changes
 
 ### Production Mode
 ```bash
-node server.js
+npm start
 ```
 
 ## API Endpoints
