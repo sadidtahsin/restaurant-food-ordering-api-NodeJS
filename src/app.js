@@ -10,7 +10,6 @@ app.use(express.urlencoded({ extended: true }));
 
 //logger middleware
 app.use("", (req, res, next) => {
-    console.log("Hello from logger middleware");
     next();
 });
 
